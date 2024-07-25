@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
@@ -6,8 +6,20 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { useNavigate } from 'react-router-dom';
 
 function SortableItem({ id, title, image, type, price, onMoveToTop, onMoveToBottom, onRemove }) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigate('/batches');
+    }, 10000); // 10 seconds
+
+    // Cleanup timeout if the component unmounts before the timeout completes
+    return () => clearTimeout(timer);
+  }, [navigate]);
+
   const {
     attributes,
     listeners,
@@ -44,16 +56,16 @@ function SortableItem({ id, title, image, type, price, onMoveToTop, onMoveToBott
   };
 
   const fontStyle = {
-    display:'flex',
+    display: 'flex',
     width: '100px',
     height: '26px',
     borderRadius: '4px',
     backgroundColor: '#DBFFCE',
     padding: '4px',
     textAlign: 'center',
-    alignItems:'center',
+    alignItems: 'center',
     lineHeight: '26px',
-    top:'436px',
+    top: '436px',
     opacity: 1,
   };
 
@@ -82,45 +94,45 @@ function SortableItem({ id, title, image, type, price, onMoveToTop, onMoveToBott
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <div style={leftSectionStyle}>
-        <DragIndicatorIcon />
-        <img src={image} alt={title} style={imgStyle} />
-        <div>
-          <div >{title}</div>
-   
+    <>
+      <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+        <div style={leftSectionStyle}>
+          <DragIndicatorIcon />
+          <img src={image} alt={title} style={imgStyle} />
+          <div>
+            <div>{title}</div>
+          </div>
+        </div>
+        <div style={rightSectionStyle}>
+          <div className="w-full" style={{ marginLeft: '16px', top: '329px', left: '880px', display: 'flex' }}>{price}</div>
+          <div style={fontStyle}>{type}</div>
+          <IconButton
+            aria-label="more"
+            aria-controls="long-menu"
+            aria-haspopup="true"
+            onClick={handleMenuClick}
+            style={{ marginLeft: '1px' }}
+          >
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleMenuClose}
+            PaperProps={{
+              style: {
+                maxHeight: 48 * 4.5,
+                width: '20ch',
+              },
+            }}
+          >
+            <MenuItem onClick={() => handleMenuItemClick('Move to Top')}>Move to Top</MenuItem>
+            <MenuItem onClick={() => handleMenuItemClick('Move to Bottom')}>Move to Bottom</MenuItem>
+            <MenuItem onClick={() => handleMenuItemClick('Remove')}>Remove</MenuItem>
+          </Menu>
         </div>
       </div>
-      <div style={rightSectionStyle}>
-       
-        <div className="w-full" style={{ marginLeft: '16px' ,top:'329px',lefet:'880px', display:'flex' }}>{price}</div>
-        <div style={fontStyle}>{type}</div>
-        <IconButton
-          aria-label="more"
-          aria-controls="long-menu"
-          aria-haspopup="true"
-          onClick={handleMenuClick}
-          style={{ marginLeft: '1px' }}
-        >
-          <MoreVertIcon />
-        </IconButton>
-        <Menu
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleMenuClose}
-          PaperProps={{
-            style: {
-              maxHeight: 48 * 4.5,
-              width: '20ch',
-            },
-          }}
-        >
-          <MenuItem onClick={() => handleMenuItemClick('Move to Top')}>Move to Top</MenuItem>
-          <MenuItem onClick={() => handleMenuItemClick('Move to Bottom')}>Move to Bottom</MenuItem>
-          <MenuItem onClick={() => handleMenuItemClick('Remove')}>Remove</MenuItem>
-        </Menu>
-      </div>
-    </div>
+    </>
   );
 }
 
